@@ -28,7 +28,7 @@
 
             <div class="sidebar-footer">
                 <p>Internal Use Only</p>
-                <p style="opacity: 0.5;">v3.0.1 (Stable)</p>
+                <p style="opacity: 0.5;">v3.0.2</p>
             </div>
         </aside>
 
@@ -71,11 +71,25 @@
                                     <label>Self Storage Bucket Path</label>
                                     <input type="text" id="b-bucket" placeholder="your-bucket-path/">
                                 </div>
+                                
                                 <div class="divider-text">General Index Properties</div>
-                                <div class="input-group"><label>Home Path</label><input type="text" id="b-homePath" placeholder="$SPLUNK_DB/$_index_name/db"></div>
-                                <div class="input-group"><label>Cold Path</label><input type="text" id="b-coldPath" placeholder="$SPLUNK_DB/$_index_name/colddb"></div>
-                                <div class="input-group"><label>Thawed Path</label><input type="text" id="b-thawedPath" placeholder="$SPLUNK_DB/$_index_name/thaweddb"></div>
-                                <div class="input-group"><label>Max Warm DB Count</label><input type="number" id="b-maxWarmDB" placeholder="e.g. 300"></div>
+                                
+                                <div class="input-group">
+                                    <label>Home Path</label>
+                                    <input type="text" id="b-homePath" placeholder="$SPLUNK_DB/$_index_name/db">
+                                </div>
+                                <div class="input-group">
+                                    <label>Cold Path</label>
+                                    <input type="text" id="b-coldPath" placeholder="$SPLUNK_DB/$_index_name/colddb">
+                                </div>
+                                <div class="input-group">
+                                    <label>Thawed Path</label>
+                                    <input type="text" id="b-thawedPath" placeholder="$SPLUNK_DB/$_index_name/thaweddb">
+                                </div>
+                                <div class="input-group">
+                                    <label>Max Warm DB Count</label>
+                                    <input type="number" id="b-maxWarmDB" placeholder="e.g. 300">
+                                </div>
                             </div>
                         </form>
                     </div>
@@ -152,11 +166,13 @@
                         </div>
                         <div class="input-group">
                             <label>Auth Type</label>
+                            
                             <select id="c-auth" onchange="toggleAuth()">
-                                <option value="none">None</option>
+                                <option value="none" selected>None</option>
                                 <option value="basic">Basic</option>
-                                <option value="token" selected>Bearer Token</option>
+                                <option value="token">Bearer Token</option>
                             </select>
+
                         </div>
                     </div>
 
@@ -165,7 +181,7 @@
                         <div class="input-group"><label>Password</label><input type="password" id="c-pass" placeholder="Please enter password"></div>
                     </div>
 
-                    <div id="auth-token" class="auth-row">
+                    <div id="auth-token" class="auth-row hidden">
                         <div class="input-group full"><label>Bearer Token String</label><input type="text" id="c-token" placeholder="Enter your token value"></div>
                     </div>
 
