@@ -1,0 +1,44 @@
+# Prudent Consultant Suite
+
+A unified, client-side operations suite designed for Splunk consultants. This toolkit streamlines daily administrative tasks by automating configuration generation and API command construction.
+
+## 🚀 Tools Included
+
+### 1. Bulk Index Creator
+Automates the generation of Splunk `indexes.conf` stanzas from spreadsheet data.
+* **Input:** Excel (`.xlsx`, `.xls`) or CSV files.
+* **Features:**
+    * Drag-and-drop interface for multiple files.
+    * Intelligent merging of global defaults with row-specific overrides.
+    * "Advanced Options" for setting specific paths (`homePath`, `coldPath`, `thawedPath`).
+    * One-click export to JSON.
+
+### 2. CURL Generator
+A GUI-based builder for constructing complex Splunk REST API requests without syntax errors.
+* **Features:**
+    * Supports **Basic Auth** and **Bearer Token** authentication.
+    * Includes a comprehensive library of **Splunk 10.0 Knowledge Endpoints** (Lookups, Macros, Data Models, etc.).
+    * Automatic toggling of the management port (`8089`).
+    * Instant copy-to-clipboard functionality.
+
+## 🛠️ Technology Stack
+
+* **Frontend:** HTML5, CSS3 (Custom "Prudent Navy" Theme), Vanilla JavaScript (ES6+).
+* **Libraries:** [SheetJS (xlsx)](https://github.com/SheetJS/sheetjs) for parsing Excel files in the browser.
+* **Design:** Responsive Glassmorphism UI with FontAwesome icons.
+
+## 📦 How to Use
+
+No installation or server is required. This application runs entirely in the browser.
+
+1.  Clone this repository or download the files.
+2.  Open **`index.html`** in any modern web browser (Chrome, Edge, Firefox).
+3.  Select a tool from the sidebar to begin.
+
+## 🔒 Security Note
+
+* **Client-Side Only:** All file processing and logic occur locally within your browser.
+* **Data Privacy:** No customer data, credentials, or tokens are ever sent to an external server.
+
+---
+*Prepared for Prudent Internal Use Only.*

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prudent Consultant Suite</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-logo"><i class="fa-solid fa-layer-group"></i></div>
+                <span>Prudent Consultant Suite</span>
+            </div>
+            
+            <nav class="nav-menu">
+                <button class="nav-btn active" onclick="switchTab('bulk', this)">
+                    <i class="fa-solid fa-table"></i> Bulk Index Creator
+                </button>
+                <button class="nav-btn" onclick="switchTab('curl', this)">
+                    <i class="fa-solid fa-terminal"></i> CURL Generator
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <p>Internal Use Only</p>
+                <p style="opacity: 0.5;">v3.0.1 (Stable)</p>
+            </div>
+        </aside>
+
+        <main class="content-area">
+            
+            <section id="view-bulk" class="view-section active">
+                
+                <div class="header-pill">
+                    <div class="pill-icon"><i class="fa-solid fa-layer-group"></i></div>
+                    <div>
+                        <h1>Bulk Index Creator</h1>
+                        <p>Professional Splunk Configuration Generator</p>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid bulk-grid">
+                    <div class="card settings-card">
+                        <div class="card-title"><i class="fa-solid fa-sliders"></i> Global Settings</div>
+                        <form id="bulk-config-form">
+                            <div class="input-group">
+                                <label>Datatype</label>
+                                <div class="select-wrapper">
+                                    <select id="b-datatype">
+                                        <option value="">Select Datatype...</option>
+                                        <option value="Metrics">Metrics</option>
+                                        <option value="Events">Events</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="input-group"><label>Max Data Size (MB)</label><input type="number" id="b-maxData" placeholder="e.g. 300"></div>
+                            <div class="input-group"><label>Searchable Days</label><input type="number" id="b-searchDays" placeholder="e.g. 30"></div>
+                            <div class="input-group"><label>Archival Retention (Days)</label><input type="number" id="b-retention" placeholder="e.g. 365"></div>
+                            
+                            <button type="button" id="btn-advanced-toggle" class="advanced-toggle">
+                                Advanced Options <i class="fa-solid fa-chevron-down"></i>
+                            </button>
+
+                            <div id="advanced-options" class="advanced-section hidden">
+                                <div class="input-group">
+                                    <label>Self Storage Bucket Path</label>
+                                    <input type="text" id="b-bucket" placeholder="your-bucket-path/">
+                                </div>
+                                <div class="divider-text">General Index Properties</div>
+                                <div class="input-group"><label>Home Path</label><input type="text" id="b-homePath" placeholder="$SPLUNK_DB/$_index_name/db"></div>
+                                <div class="input-group"><label>Cold Path</label><input type="text" id="b-coldPath" placeholder="$SPLUNK_DB/$_index_name/colddb"></div>
+                                <div class="input-group"><label>Thawed Path</label><input type="text" id="b-thawedPath" placeholder="$SPLUNK_DB/$_index_name/thaweddb"></div>
+                                <div class="input-group"><label>Max Warm DB Count</label><input type="number" id="b-maxWarmDB" placeholder="e.g. 300"></div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="card upload-card">
+                        <div class="card-title"><i class="fa-solid fa-bolt"></i> Upload & Generate</div>
+                        
+                        <div id="drop-zone" class="drop-zone">
+                            <div class="cloud-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+                            <h3>Drag & Drop Files</h3>
+                            <p>or click to append multiple files</p>
+                            <input type="file" id="file-input" accept=".xlsx, .xls, .csv" multiple style="display:none;">
+                        </div>
+
+                        <div id="file-list-container" class="file-list-container hidden"></div>
+
+                        <button id="process-btn" class="primary-btn big-btn">
+                            Generate JSON file <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+
+                        <div class="export-section">
+                            <label>Export Filename</label>
+                            <div class="filename-input-wrapper">
+                                <input type="text" id="export-filename" placeholder="output_filename">
+                                <span class="extension">.json</span>
+                            </div>
+                            <div class="save-hint"><i class="fa-regular fa-eye"></i> Saving as: <span id="preview-filename">output.json</span></div>
+                        </div>
+
+                        <div class="action-row">
+                            <button id="btn-copy-json" class="action-btn btn-copy"><i class="fa-regular fa-copy"></i> Copy JSON</button>
+                            <button id="btn-download-json" class="action-btn btn-download"><i class="fa-solid fa-download"></i> Download</button>
+                        </div>
+
+                        <div id="bulk-result" class="result-box hidden">
+                            <div class="code-window">
+                                <div class="code-header">JSON Preview</div>
+                                <pre id="bulk-output" class="code-block"></pre>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+            <section id="view-curl" class="view-section">
+                <div class="header-pill">
+                    <div class="pill-icon"><i class="fa-solid fa-terminal"></i></div>
+                    <div>
+                        <h1>CURL Generator</h1>
+                        <p>Construct Splunk API requests instantly</p>
+                    </div>
+                </div>
+
+                <div class="card curl-card">
+                    <div class="card-title"><i class="fa-solid fa-sliders"></i> Configuration</div>
+                    
+                    <div class="horizontal-row">
+                        <div class="input-group">
+                            <label>Method</label>
+                            <select id="c-method">
+                                <option value="GET">GET</option>
+                                <option value="POST">POST</option>
+                                <option value="DELETE">DELETE</option>
+                            </select>
+                        </div>
+                        <div class="input-group" style="flex: 2;">
+                            <label>Base URL</label>
+                            <input type="text" id="c-url" value="https://" placeholder="https://splunk-instance">
+                            <div class="checkbox-wrapper" style="margin-top: 8px;">
+                                <input type="checkbox" id="c-includePort" checked>
+                                <label for="c-includePort" style="font-size:0.8rem; font-weight:500; color:var(--text-light); cursor:pointer;">Append Management Port (8089)</label>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label>Auth Type</label>
+                            <select id="c-auth" onchange="toggleAuth()">
+                                <option value="none">None</option>
+                                <option value="basic">Basic</option>
+                                <option value="token" selected>Bearer Token</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="auth-basic" class="auth-row hidden">
+                        <div class="input-group"><label>Username</label><input type="text" id="c-user" placeholder="Enter your username"></div>
+                        <div class="input-group"><label>Password</label><input type="password" id="c-pass" placeholder="Please enter password"></div>
+                    </div>
+
+                    <div id="auth-token" class="auth-row">
+                        <div class="input-group full"><label>Bearer Token String</label><input type="text" id="c-token" placeholder="Enter your token value"></div>
+                    </div>
+
+                    <div class="input-group" style="margin-top: 20px;">
+                        <label>Target Endpoint (Knowledge Object)</label>
+                        <select id="c-endpoint">
+                            <optgroup label="Core Knowledge Objects">
+                                <option value="datamodel/model">datamodel/model</option>
+                                <option value="saved/eventtypes">saved/eventtypes</option>
+                                <option value="saved/searches">saved/searches (Reports/Alerts)</option>
+                                <option value="search/tags">search/tags</option>
+                                <option value="search/fields">search/fields</option>
+                                <option value="configs/conf-macros">configs/conf-macros (Macros)</option>
+                                <option value="configs/conf-transactiontypes">configs/conf-transactiontypes</option>
+                            </optgroup>
+                            <optgroup label="Field Enrichment">
+                                <option value="data/props/extractions">data/props/extractions</option>
+                                <option value="data/transforms/extractions">data/transforms/extractions</option>
+                                <option value="data/props/calcfields">data/props/calcfields</option>
+                                <option value="data/props/fieldaliases">data/props/fieldaliases</option>
+                                <option value="data/props/sourcetype-rename">data/props/sourcetype-rename</option>
+                            </optgroup>
+                            <optgroup label="Lookups">
+                                <option value="data/lookup-table-files">data/lookup-table-files</option>
+                                <option value="data/props/lookups">data/props/lookups</option>
+                                <option value="data/transforms/lookups">data/transforms/lookups</option>
+                            </optgroup>
+                            <optgroup label="Dashboards & UI">
+                                <option value="data/ui/views">data/ui/views</option>
+                                <option value="data/ui/panels">data/ui/panels</option>
+                                <option value="data/ui/workflow-actions">data/ui/workflow-actions</option>
+                                <option value="data/ui/nav">data/ui/nav</option>
+                            </optgroup>
+                            <optgroup label="System & Administration">
+                                <option value="admin/summarization">admin/summarization</option>
+                                <option value="services/auth/login">services/auth/login</option>
+                                <option value="search/jobs">search/jobs</option>
+                                <option value="messages">messages</option>
+                                <option value="server/info">server/info</option>
+                            </optgroup>
+                        </select>
+                    </div>
+
+                    <button class="primary-btn big-btn" onclick="generateCurl()">Generate Command <i class="fa-solid fa-code"></i></button>
+
+                    <div id="curl-result" class="result-box hidden">
+                        <div class="card-title" style="margin-top:20px;"><i class="fa-solid fa-terminal"></i> Result</div>
+                        <div class="code-window">
+                            <div class="code-header">BASH / CURL <button class="copy-tiny" onclick="copyText('curl-output')">Copy</button></div>
+                            <pre id="curl-output" class="code-block"></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <div id="toast" class="toast">Copied!</div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
