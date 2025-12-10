@@ -14,21 +14,21 @@
         <aside class="sidebar">
             <div class="brand">
                 <div class="brand-logo"><i class="fa-solid fa-layer-group"></i></div>
-                <span>Prudent Consultant Suite</span>
+                <span>Prudent</span>
             </div>
             
             <nav class="nav-menu">
                 <button class="nav-btn active" onclick="switchTab('bulk', this)">
-                    <i class="fa-solid fa-table"></i> Bulk Index Creator
+                    <i class="fa-solid fa-layer-group"></i> Bulk Operations
                 </button>
                 <button class="nav-btn" onclick="switchTab('curl', this)">
-                    <i class="fa-solid fa-terminal"></i> CURL Generator
+                    <i class="fa-solid fa-terminal"></i> Command Generator
                 </button>
             </nav>
 
             <div class="sidebar-footer">
                 <p>Internal Use Only</p>
-                <p style="opacity: 0.5;">v3.0.2</p>
+                <p style="opacity: 0.5;">v4.3.3 (Stable)</p>
             </div>
         </aside>
 
@@ -37,60 +37,59 @@
             <section id="view-bulk" class="view-section active">
                 
                 <div class="header-pill">
-                    <div class="pill-icon"><i class="fa-solid fa-layer-group"></i></div>
+                    <div class="pill-icon"><i class="fa-solid fa-cubes-stacked"></i></div>
                     <div>
-                        <h1>Bulk Index Creator</h1>
-                        <p>Professional Splunk Configuration Generator</p>
+                        <h1>Bulk Operations</h1>
+                        <p>Generate configuration manifests from CSV/Excel data</p>
                     </div>
                 </div>
 
                 <div class="dashboard-grid bulk-grid">
                     <div class="card settings-card">
-                        <div class="card-title"><i class="fa-solid fa-sliders"></i> Global Settings</div>
+                        <div class="card-title"><i class="fa-solid fa-sliders"></i> Operation Settings</div>
                         <form id="bulk-config-form">
+                            
                             <div class="input-group">
-                                <label>Datatype</label>
+                                <label>Operation Type</label>
                                 <div class="select-wrapper">
-                                    <select id="b-datatype">
-                                        <option value="">Select Datatype...</option>
-                                        <option value="Metrics">Metrics</option>
-                                        <option value="Events">Events</option>
+                                    <select id="b-operation-type" onchange="updateTemplateLink()">
+                                        <optgroup label="Core Resources">
+                                            <option value="indexes" selected>Indexes</option>
+                                            <option value="hec_tokens">HEC Tokens</option>
+                                        </optgroup>
+                                        <optgroup label="Apps & Add-ons">
+                                            <option value="splunkbase">Splunkbase Apps</option>
+                                            <option value="private_apps">Private Apps</option>
+                                        </optgroup>
+                                        <optgroup label="Network & Security">
+                                            <option value="ip_allowlist">IP Allowlist</option>
+                                            <option value="outbound_ports">Outbound Ports</option>
+                                        </optgroup>
+                                        <optgroup label="System">
+                                            <option value="maintenance_windows">Maintenance Windows</option>
+                                        </optgroup>
                                     </select>
                                 </div>
                             </div>
-                            <div class="input-group"><label>Max Data Size (MB)</label><input type="number" id="b-maxData" placeholder="e.g. 300"></div>
-                            <div class="input-group"><label>Searchable Days</label><input type="number" id="b-searchDays" placeholder="e.g. 30"></div>
-                            <div class="input-group"><label>Archival Retention (Days)</label><input type="number" id="b-retention" placeholder="e.g. 365"></div>
-                            
-                            <button type="button" id="btn-advanced-toggle" class="advanced-toggle">
-                                Advanced Options <i class="fa-solid fa-chevron-down"></i>
-                            </button>
 
-                            <div id="advanced-options" class="advanced-section hidden">
-                                <div class="input-group">
-                                    <label>Self Storage Bucket Path</label>
-                                    <input type="text" id="b-bucket" placeholder="your-bucket-path/">
-                                </div>
-                                
-                                <div class="divider-text">General Index Properties</div>
-                                
-                                <div class="input-group">
-                                    <label>Home Path</label>
-                                    <input type="text" id="b-homePath" placeholder="$SPLUNK_DB/$_index_name/db">
-                                </div>
-                                <div class="input-group">
-                                    <label>Cold Path</label>
-                                    <input type="text" id="b-coldPath" placeholder="$SPLUNK_DB/$_index_name/colddb">
-                                </div>
-                                <div class="input-group">
-                                    <label>Thawed Path</label>
-                                    <input type="text" id="b-thawedPath" placeholder="$SPLUNK_DB/$_index_name/thaweddb">
-                                </div>
-                                <div class="input-group">
-                                    <label>Max Warm DB Count</label>
-                                    <input type="number" id="b-maxWarmDB" placeholder="e.g. 300">
+                            <div id="op-description" style="margin-bottom: 20px; font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
+                                Generate <code>indexes.conf</code> stanzas. Upload a CSV/Excel with: Index Name, Datatype, Retention, etc.
+                            </div>
+
+                            <div id="index-advanced-wrapper">
+                                <button type="button" id="btn-advanced-toggle" class="advanced-toggle">
+                                    Index Properties <i class="fa-solid fa-chevron-down"></i>
+                                </button>
+
+                                <div id="advanced-options" class="advanced-section hidden">
+                                    <div class="input-group"><label>Self Storage Bucket Path</label><input type="text" id="b-bucket" placeholder="your-bucket-path/"></div>
+                                    <div class="divider-text">Path Overrides</div>
+                                    <div class="input-group"><label>Home Path</label><input type="text" id="b-homePath" placeholder="$SPLUNK_DB/$_index_name/db"></div>
+                                    <div class="input-group"><label>Cold Path</label><input type="text" id="b-coldPath" placeholder="$SPLUNK_DB/$_index_name/colddb"></div>
+                                    <div class="input-group"><label>Thawed Path</label><input type="text" id="b-thawedPath" placeholder="$SPLUNK_DB/$_index_name/thaweddb"></div>
                                 </div>
                             </div>
+
                         </form>
                     </div>
 
@@ -100,14 +99,22 @@
                         <div id="drop-zone" class="drop-zone">
                             <div class="cloud-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
                             <h3>Drag & Drop Files</h3>
-                            <p>or click to append multiple files</p>
+                            <p>or click to select CSV / Excel</p>
+                            
+                            <div class="sample-link-wrapper">
+                                <span style="opacity: 0.6; font-size: 0.8rem; margin-right: 5px;">Need a template?</span>
+                                <a href="#" id="btn-download-csv" class="sample-link"><i class="fa-solid fa-file-csv"></i> CSV</a>
+                                <span style="opacity: 0.3; margin: 0 5px;">|</span>
+                                <a href="#" id="btn-download-xlsx" class="sample-link"><i class="fa-solid fa-file-excel"></i> Excel</a>
+                            </div>
+
                             <input type="file" id="file-input" accept=".xlsx, .xls, .csv" multiple style="display:none;">
                         </div>
 
                         <div id="file-list-container" class="file-list-container hidden"></div>
 
                         <button id="process-btn" class="primary-btn big-btn">
-                            Generate JSON file <i class="fa-solid fa-arrow-right"></i>
+                            Generate JSON <i class="fa-solid fa-arrow-right"></i>
                         </button>
 
                         <div class="export-section">
@@ -116,7 +123,6 @@
                                 <input type="text" id="export-filename" placeholder="output_filename">
                                 <span class="extension">.json</span>
                             </div>
-                            <div class="save-hint"><i class="fa-regular fa-eye"></i> Saving as: <span id="preview-filename">output.json</span></div>
                         </div>
 
                         <div class="action-row">
@@ -126,7 +132,7 @@
 
                         <div id="bulk-result" class="result-box hidden">
                             <div class="code-window">
-                                <div class="code-header">JSON Preview</div>
+                                <div class="code-header">Generated Output</div>
                                 <pre id="bulk-output" class="code-block"></pre>
                             </div>
                         </div>
@@ -139,14 +145,13 @@
                 <div class="header-pill">
                     <div class="pill-icon"><i class="fa-solid fa-terminal"></i></div>
                     <div>
-                        <h1>CURL Generator</h1>
-                        <p>Construct Splunk API requests instantly</p>
+                        <h1>Command Generator</h1>
+                        <p>Construct ACS & REST API requests</p>
                     </div>
                 </div>
 
                 <div class="card curl-card">
                     <div class="card-title"><i class="fa-solid fa-sliders"></i> Configuration</div>
-                    
                     <div class="horizontal-row">
                         <div class="input-group">
                             <label>Method</label>
@@ -154,6 +159,7 @@
                                 <option value="GET">GET</option>
                                 <option value="POST">POST</option>
                                 <option value="DELETE">DELETE</option>
+                                <option value="PUT">PUT</option>
                             </select>
                         </div>
                         <div class="input-group" style="flex: 2;">
@@ -161,72 +167,80 @@
                             <input type="text" id="c-url" value="https://" placeholder="https://splunk-instance">
                             <div class="checkbox-wrapper" style="margin-top: 8px;">
                                 <input type="checkbox" id="c-includePort" checked>
-                                <label for="c-includePort" style="font-size:0.8rem; font-weight:500; color:var(--text-light); cursor:pointer;">Append Management Port (8089)</label>
+                                <label for="c-includePort" style="font-size:0.8rem; font-weight:500; color:var(--text-light); cursor:pointer;">Append Port 8089</label>
                             </div>
                         </div>
                         <div class="input-group">
                             <label>Auth Type</label>
-                            
                             <select id="c-auth" onchange="toggleAuth()">
                                 <option value="none" selected>None</option>
                                 <option value="basic">Basic</option>
                                 <option value="token">Bearer Token</option>
                             </select>
-
                         </div>
                     </div>
-
+                    
                     <div id="auth-basic" class="auth-row hidden">
                         <div class="input-group"><label>Username</label><input type="text" id="c-user" placeholder="Enter your username"></div>
                         <div class="input-group"><label>Password</label><input type="password" id="c-pass" placeholder="Please enter password"></div>
                     </div>
-
                     <div id="auth-token" class="auth-row hidden">
                         <div class="input-group full"><label>Bearer Token String</label><input type="text" id="c-token" placeholder="Enter your token value"></div>
                     </div>
-
+                    
                     <div class="input-group" style="margin-top: 20px;">
-                        <label>Target Endpoint (Knowledge Object)</label>
+                        <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                            <label>Target Endpoint</label>
+                            <a href="https://docs.splunk.com/Documentation/Splunk/10.0.1/RESTREF/RESTprolog" target="_blank" style="font-size: 0.75rem; color: var(--primary); text-decoration: none;">View API Reference (10.0.1) <i class="fa-solid fa-external-link-alt"></i></a>
+                        </div>
+                        
                         <select id="c-endpoint">
-                            <optgroup label="Core Knowledge Objects">
-                                <option value="datamodel/model">datamodel/model</option>
-                                <option value="saved/eventtypes">saved/eventtypes</option>
-                                <option value="saved/searches">saved/searches (Reports/Alerts)</option>
-                                <option value="search/tags">search/tags</option>
-                                <option value="search/fields">search/fields</option>
-                                <option value="configs/conf-macros">configs/conf-macros (Macros)</option>
-                                <option value="configs/conf-transactiontypes">configs/conf-transactiontypes</option>
+                            <optgroup label="ACS: Network & Security">
+                                <option value="access/outbound-ports" data-path="adminconfig/v2">access/outbound-ports (Configure Outbound Ports)</option>
+                                <option value="access/search-api/ipallowlists" data-path="adminconfig/v2">access/{feature}/ipallowlists (IP Allow Lists)</option>
+                                <option value="private-connectivity/endpoints" data-path="adminconfig/v2">private-connectivity (Private Connectivity)</option>
+                                <option value="inputs/http-event-collectors" data-path="adminconfig/v2">inputs/http-event-collectors (HEC Tokens)</option>
+                                <option value="tokens" data-path="adminconfig/v2">tokens (Auth Tokens)</option>
+                                <option value="emek/key" data-path="adminconfig/v2">emek/key (Encryption Keys)</option>
+                                <option value="observability/sso-pairing" data-path="adminconfig/v2">observability/sso-pairing (Unified Identity)</option>
                             </optgroup>
-                            <optgroup label="Field Enrichment">
-                                <option value="data/props/extractions">data/props/extractions</option>
-                                <option value="data/transforms/extractions">data/transforms/extractions</option>
-                                <option value="data/props/calcfields">data/props/calcfields</option>
-                                <option value="data/props/fieldaliases">data/props/fieldaliases</option>
-                                <option value="data/props/sourcetype-rename">data/props/sourcetype-rename</option>
+
+                            <optgroup label="ACS: Apps & Content">
+                                <option value="apps/victoria" data-path="adminconfig/v2">apps/victoria (Manage Apps)</option>
+                                <option value="permissions/apps" data-path="adminconfig/v2">permissions/apps (App Permissions)</option>
+                                <option value="apps/victoria/download/{app_id}" data-path="adminconfig/v2">apps/download (Export Apps)</option>
                             </optgroup>
-                            <optgroup label="Lookups">
-                                <option value="data/lookup-table-files">data/lookup-table-files</option>
-                                <option value="data/props/lookups">data/props/lookups</option>
-                                <option value="data/transforms/lookups">data/transforms/lookups</option>
+
+                            <optgroup label="ACS: Data & Storage">
+                                <option value="indexes" data-path="adminconfig/v2">indexes (Manage Indexes)</option>
+                                <option value="cloud-resources/self-storage-locations/buckets" data-path="adminconfig/v2">self-storage-locations (DDSS)</option>
                             </optgroup>
-                            <optgroup label="Dashboards & UI">
-                                <option value="data/ui/views">data/ui/views</option>
-                                <option value="data/ui/panels">data/ui/panels</option>
-                                <option value="data/ui/workflow-actions">data/ui/workflow-actions</option>
-                                <option value="data/ui/nav">data/ui/nav</option>
+
+                            <optgroup label="ACS: System Administration">
+                                <option value="limits" data-path="adminconfig/v2">limits (Limits.conf)</option>
+                                <option value="maintenance-windows/schedules" data-path="adminconfig/v2">maintenance-windows/schedules</option>
+                                <option value="maintenance-windows/preferences" data-path="adminconfig/v2">maintenance-windows/preferences (Change Freeze)</option>
+                                <option value="restart-now" data-path="adminconfig/v2">restart-now (Manage Restarts)</option>
+                                <option value="deployment/retry" data-path="adminconfig/v2">deployment/retry (Retry Failed Ops)</option>
+                                <option value="python-runtime" data-path="adminconfig/v2">python-runtime</option>
                             </optgroup>
-                            <optgroup label="System & Administration">
-                                <option value="admin/summarization">admin/summarization</option>
-                                <option value="services/auth/login">services/auth/login</option>
-                                <option value="search/jobs">search/jobs</option>
-                                <option value="messages">messages</option>
-                                <option value="server/info">server/info</option>
+
+                            <optgroup label="REST: Knowledge Objects">
+                                <option value="datamodel/model" data-path="services">datamodel/model</option>
+                                <option value="saved/searches" data-path="services">saved/searches (Reports/Alerts)</option>
+                                <option value="configs/conf-macros" data-path="services">configs/conf-macros</option>
+                                <option value="search/tags" data-path="services">search/tags</option>
+                            </optgroup>
+
+                            <optgroup label="REST: System">
+                                <option value="server/info" data-path="services">server/info</option>
+                                <option value="authentication/users" data-path="services">authentication/users (Manage Users)</option>
+                                <option value="authorization/roles" data-path="services">authorization/roles (Manage Roles)</option>
                             </optgroup>
                         </select>
                     </div>
-
+                    
                     <button class="primary-btn big-btn" onclick="generateCurl()">Generate Command <i class="fa-solid fa-code"></i></button>
-
                     <div id="curl-result" class="result-box hidden">
                         <div class="card-title" style="margin-top:20px;"><i class="fa-solid fa-terminal"></i> Result</div>
                         <div class="code-window">
